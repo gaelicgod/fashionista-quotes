@@ -7,18 +7,56 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Loader2 } from "lucide-react"
+import { FashionIconPanel } from '@/components/FashionIconPanel'
 
 export default function FashionQuoteGenerator() {
   const [job, setJob] = useState('')
   const [mood, setMood] = useState('')
+  const [isPanelOpen, setIsPanelOpen] = useState(false)
+  const [currentIcon, setCurrentIcon] = useState('')
+  const [iconInfo, setIconInfo] = useState(null)
 
-  const { messages, append, isLoading } = useChat()
+  const { messages, append, isLoading } = useChat({
+    api: '/api/chat',
+    body: { action: 'generateQuote' },
+  })
+
+  const { append: appendIconInfo } = useChat({
+    api: '/api/chat',
+    body: { action: 'getIconInfo' },
+    onFinish: (message) => {
+      const info = JSON.parse(message.content)
+      setIconInfo(info)
+      setIsPanelOpen(true)
+    },
+  })
 
   const handleGenerateQuote = (e: React.FormEvent) => {
     e.preventDefault()
     const prompt = `I&#39;m a ${job} and I&#39;m feeling ${mood}. Can you give me an inspirational fashion quote that&#39;s relevant to my situation?`
     append({ role: 'user', content: prompt })
   }
+
+  const handleIconClick = (iconName: string) => {
+    setCurrentIcon(iconName)
+    appendIconInfo({ role: 'user', content: iconName })
+    setIsPanelOpen(true)
+  }
+
+  const getQuoteData = () => {
+    if (messages.length > 0) {
+      try {
+        const data = JSON.parse(messages[messages.length - 1].content)
+        return data
+      } catch (error) {
+        console.error('Failed to parse quote data:', error)
+        return null
+      }
+    }
+    return null
+  }
+
+  const quoteData = getQuoteData()
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4 font-serif">
@@ -69,14 +107,25 @@ export default function FashionQuoteGenerator() {
               )}
             </Button>
           </form>
-          {messages.length > 0 && (
+          {quoteData && (
             <div className="mt-6 p-4 bg-black/80 text-white rounded-lg">
-              <p className="text-lg font-semibold text-center italic">{messages[messages.length - 1].content}</p>
-              <div className="mt-2 text-xs text-center uppercase tracking-wider">- The Fashion Oracle</div>
+              <p className="text-lg font-semibold text-center italic">&ldquo;{quoteData.quote}&rdquo;</p>
+              <button
+                onClick={() => handleIconClick(quoteData.icon)}
+                className="mt-2 text-xs text-center uppercase tracking-wider text-yellow-500 hover:text-yellow-400 transition-colors duration-300 w-full"
+              >
+                - {quoteData.icon} (Click for more info)
+              </button>
             </div>
           )}
         </CardContent>
       </Card>
+      <FashionIconPanel
+        isOpen={isPanelOpen}
+        onClose={() => setIsPanelOpen(false)}
+        iconName={currentIcon}
+        iconInfo={iconInfo}
+      />
     </div>
   )
 }
