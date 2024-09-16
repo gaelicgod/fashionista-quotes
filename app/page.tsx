@@ -15,6 +15,7 @@ export default function FashionQuoteGenerator() {
   const [isPanelOpen, setIsPanelOpen] = useState(false)
   const [currentIcon, setCurrentIcon] = useState('')
   const [iconInfo, setIconInfo] = useState(null)
+  const [isIconInfoLoading, setIsIconInfoLoading] = useState(false)
 
   const { messages, append, isLoading } = useChat({
     api: '/api/chat',
@@ -27,7 +28,7 @@ export default function FashionQuoteGenerator() {
     onFinish: (message) => {
       const info = JSON.parse(message.content)
       setIconInfo(info)
-      setIsPanelOpen(true)
+      setIsIconInfoLoading(false)
     },
   })
 
@@ -39,8 +40,10 @@ export default function FashionQuoteGenerator() {
 
   const handleIconClick = (iconName: string) => {
     setCurrentIcon(iconName)
-    appendIconInfo({ role: 'user', content: iconName })
+    setIconInfo(null)
+    setIsIconInfoLoading(true)
     setIsPanelOpen(true)
+    appendIconInfo({ role: 'user', content: iconName })
   }
 
   const getQuoteData = () => {
@@ -125,6 +128,7 @@ export default function FashionQuoteGenerator() {
         onClose={() => setIsPanelOpen(false)}
         iconName={currentIcon}
         iconInfo={iconInfo}
+        isLoading={isIconInfoLoading}
       />
     </div>
   )

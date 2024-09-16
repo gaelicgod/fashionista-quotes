@@ -9,9 +9,10 @@ interface FashionIconPanelProps {
     bio: string
     achievements: string[]
   } | null
+  isLoading: boolean
 }
 
-export function FashionIconPanel({ isOpen, onClose, iconName, iconInfo }: FashionIconPanelProps) {
+export function FashionIconPanel({ isOpen, onClose, iconName, iconInfo, isLoading }: FashionIconPanelProps) {
   return (
     <motion.div
       initial={{ x: '100%' }}
@@ -27,7 +28,9 @@ export function FashionIconPanel({ isOpen, onClose, iconName, iconInfo }: Fashio
           <X size={24} />
         </button>
         <h2 className="text-2xl font-bold uppercase tracking-wider mb-4 text-black">{iconName}</h2>
-        {iconInfo ? (
+        {isLoading ? (
+          <p className="text-sm text-gray-700">Loading icon information...</p>
+        ) : iconInfo ? (
           <>
             <p className="text-sm mb-4 text-gray-700">{iconInfo.bio}</p>
             <h3 className="text-lg font-bold uppercase tracking-wide mb-2 text-black">Key Achievements</h3>
@@ -38,7 +41,7 @@ export function FashionIconPanel({ isOpen, onClose, iconName, iconInfo }: Fashio
             </ul>
           </>
         ) : (
-          <p className="text-sm text-gray-700">Loading icon information...</p>
+          <p className="text-sm text-gray-700">No information available.</p>
         )}
       </div>
     </motion.div>
