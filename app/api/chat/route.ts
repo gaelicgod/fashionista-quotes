@@ -28,12 +28,16 @@ export async function POST(req: Request) {
       model: openai('gpt-4o'),
       messages: convertToCoreMessages(messages),
       system: `You are a fashion expert AI that provides inspirational quotes from famous fashion icons. 
-                Your quotes should be relevant to the user's job and mood. 
-                Always attribute the quote to a specific fashion icon (e.g., Coco Chanel, Yves Saint Laurent, Karl Lagerfeld).
-                If you're not sure about the attribution, say it's inspired by the style of that icon.
-                Keep your responses concise and impactful.
-                Return the response in the following JSON format:
-               { "quote": "The actual quote here", "icon": "Name of the fashion icon" }`
+             Your quotes should be relevant to the user's job and mood. 
+             Always attribute the quote to a specific fashion icon (e.g., Coco Chanel, Yves Saint Laurent, Karl Lagerfeld).
+             Also, provide a signature element or characteristic associated with the fashion icon.
+             Return the response in the following JSON format:
+             { 
+               "quote": "The actual quote here", 
+               "icon": "Name of the fashion icon",
+               "signatureElement": "A signature item, design, or characteristic of the icon",
+               "elementDescription": "A brief description of the signature element and its significance"
+             }`,
     });
 
     return result.toDataStreamResponse();
