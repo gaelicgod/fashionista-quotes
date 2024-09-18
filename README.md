@@ -5,10 +5,12 @@ Fashionista Quotes is a Next.js application that provides inspirational quotes f
 ## Features
 
 - Dynamic quote generation using OpenAI's GPT-4 model
+- Web3 integration with RainbowKit for wallet connection
 - Responsive design with Tailwind CSS
 - Sleek UI with custom animations
 - Server-side rendering with client-side interactivity
 - Loading skeleton for improved user experience
+- Fashion icon information panel
 
 ## Getting Started
 
@@ -21,6 +23,8 @@ Fashionista Quotes is a Next.js application that provides inspirational quotes f
    Create a `.env.local` file in the root directory and add your OpenAI API key:
    ```
    OPENAI_API_KEY=your_api_key_here
+   NEXT_PUBLIC_ALCHEMY_ID=your_alchemy_id_here
+   NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=your_wallet_connect_project_id_here
    ```
 4. Run the development server:
    ```bash
@@ -58,6 +62,8 @@ To learn more about the technologies used in this project, check out the followi
 - [Tailwind CSS](https://tailwindcss.com/docs)
 - [OpenAI API](https://platform.openai.com/docs/api-reference)
 - [Framer Motion](https://www.framer.com/motion/)
+- [RainbowKit](https://www.rainbowkit.com/docs/introduction)
+- [wagmi](https://wagmi.sh/)
 
 ## Deployment
 
