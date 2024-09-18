@@ -42,8 +42,13 @@ The project uses an Edge API route for generating fashion quotes. You can find t
 
 ## Styling
 
-This project uses Tailwind CSS for styling. The main configuration can be found in:
+This project uses Tailwind CSS for styling. The main configuration can be found in `tailwind.config.js`. Custom UI components are located in the `components/ui/` directory.
 
+## Key Components
+
+- `FashionQuoteGeneratorClient`: The main component for generating quotes
+- `FashionIconPanel`: A sliding panel displaying information about fashion icons
+- `FashionQuoteSkeleton`: A loading skeleton for improved user experience
 
 ## Learn More
 
