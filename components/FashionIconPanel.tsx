@@ -1,14 +1,16 @@
 import { motion } from 'framer-motion'
-import { X } from 'lucide-react'
+import { X, Loader2 } from 'lucide-react'
+
+interface IconInfo {
+  bio: string;
+  achievements: string[];
+}
 
 interface FashionIconPanelProps {
   isOpen: boolean
   onClose: () => void
   iconName: string
-  iconInfo: {
-    bio: string
-    achievements: string[]
-  } | null
+  iconInfo: IconInfo | null
   isLoading: boolean
 }
 
@@ -24,12 +26,15 @@ export function FashionIconPanel({ isOpen, onClose, iconName, iconInfo, isLoadin
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-black hover:text-yellow-500 transition-colors"
+          aria-label="Close panel"
         >
           <X size={24} />
         </button>
         <h2 className="text-2xl font-bold uppercase tracking-wider mb-4 text-black">{iconName}</h2>
         {isLoading ? (
-          <p className="text-sm text-gray-700">Loading icon information...</p>
+          <div className="flex items-center justify-center h-40">
+            <Loader2 className="h-8 w-8 animate-spin text-yellow-500" />
+          </div>
         ) : iconInfo ? (
           <>
             <p className="text-sm mb-4 text-gray-700">{iconInfo.bio}</p>
