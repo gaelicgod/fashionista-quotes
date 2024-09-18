@@ -6,7 +6,9 @@ Fashionista Quotes is a Next.js application that provides inspirational quotes f
 
 - Dynamic quote generation using OpenAI's GPT-4 model
 - Responsive design with Tailwind CSS
-- Dark mode support
+- Sleek UI with custom animations
+- Server-side rendering with client-side interactivity
+- Loading skeleton for improved user experience
 
 ## Getting Started
 
@@ -50,6 +52,7 @@ To learn more about the technologies used in this project, check out the followi
 - [Next.js Documentation](https://nextjs.org/docs)
 - [Tailwind CSS](https://tailwindcss.com/docs)
 - [OpenAI API](https://platform.openai.com/docs/api-reference)
+- [Framer Motion](https://www.framer.com/motion/)
 
 ## Deployment
 
