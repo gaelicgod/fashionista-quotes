@@ -29,15 +29,23 @@ export function FashionQuoteGeneratorClient() {
   const [iconInfo, setIconInfo] = useState<IconInfo | null>(null)
   const [isIconInfoLoading, setIsIconInfoLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [quoteData, setQuoteData] = useState<QuoteData | null>(null)
 
-  const { messages, append, isLoading } = useChat({
+  const { append, isLoading } = useChat({
     api: '/api/chat',
     body: { action: 'generateQuote' },
     onFinish: (message) => {
-      console.log('message', message)
+      try {
+        const structuredQuote = JSON.parse(message.content) as QuoteData
+        console.log('structuredQuote', structuredQuote)
+        setQuoteData(structuredQuote)
+      } catch (parseError) {
+        console.error('Failed to parse quote data:', parseError)
+        setError('Failed to generate quote. Please try again.')
+      }
     },
     onError: (error) => {
-      console.error('Error generating quote:', error)
+      console.error('Error generating quote:', error.message)
       setError('Failed to generate quote. Please try again.')
     },
   })
@@ -65,6 +73,8 @@ export function FashionQuoteGeneratorClient() {
 
   const handleGenerateQuote = (e: React.FormEvent) => {
     e.preventDefault()
+    setError(null)
+    setQuoteData(null)
     const prompt = `I&#39;m a ${job} and I&#39;m feeling ${mood}. Can you give me an inspirational fashion quote that&#39;s relevant to my situation?`
     append({ role: 'user', content: prompt })
   }
@@ -77,21 +87,6 @@ export function FashionQuoteGeneratorClient() {
     appendIconInfo({ role: 'user', content: iconName })
   }
 
-  const getQuoteData = (): QuoteData | null => {
-    if (messages.length > 0) {
-      try {
-        const data = JSON.parse(messages[messages.length - 1].content) as QuoteData
-        return data
-      } catch (error) {
-        console.error('Failed to parse quote data:', error)
-        // setError('Failed to parse quote data. Please try again.')
-        return null
-      }
-    }
-    return null
-  }
-
-  const quoteData = getQuoteData()
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4 font-serif">
