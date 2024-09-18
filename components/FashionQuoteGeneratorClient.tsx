@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Loader2 } from "lucide-react"
 import { FashionIconPanel } from '@/components/FashionIconPanel'
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 interface QuoteData {
   quote: string;
@@ -101,6 +102,9 @@ export function FashionQuoteGeneratorClient() {
           </div>
           <CardTitle className="text-4xl font-bold text-center text-black uppercase tracking-widest mb-2">Vogue</CardTitle>
           <div className="text-xl text-center text-black uppercase tracking-wide">Fashion Oracle</div>
+          <div className="mt-4 flex justify-center">
+            <ConnectButton />
+          </div>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleGenerateQuote} className="space-y-4">
