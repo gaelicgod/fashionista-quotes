@@ -3,6 +3,7 @@
 import { Suspense } from 'react'
 import { FashionQuoteGeneratorClient } from '@/components/FashionQuoteGeneratorClient'
 import { FashionQuoteSkeleton } from '@/components/FashionQuoteSkeleton'
+import { Toaster } from 'react-hot-toast'
 
 import '@rainbow-me/rainbowkit/styles.css';
 import {
@@ -28,7 +29,7 @@ const config = getDefaultConfig({
   appName: 'My RainbowKit App',
   projectId: WALLET_CONNECT_PROJECT_ID,
   chains: [mainnet],
-  ssr: true, // If your dApp uses server side rendering (SSR)
+  ssr: true,
 });
 
 const queryClient = new QueryClient();
@@ -41,6 +42,7 @@ export default function Page() {
           <Suspense fallback={<FashionQuoteSkeleton />}>
             <FashionQuoteGeneratorClient />
           </Suspense>
+          <Toaster />
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
