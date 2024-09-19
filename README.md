@@ -43,6 +43,8 @@ Fashionista Quotes is a Next.js application that provides inspirational quotes f
 
 The project uses an Edge API route for generating fashion quotes. You can find the implementation here:
 
+`app/api/chat/route.ts`
+
 
 ## Styling
 
