@@ -6,12 +6,13 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Loader2 } from "lucide-react"
+import { Loader2, Share2, Download, Image as ImageIcon } from "lucide-react"
 import { FashionIconPanel } from '@/components/FashionIconPanel'
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useAccount } from 'wagmi'
 import { toast } from 'react-hot-toast'
 import { Address } from 'viem'
+import { motion, AnimatePresence } from 'framer-motion'
 
 interface QuoteData {
   quote: string;
@@ -28,56 +29,16 @@ interface IconInfo {
 export function FashionQuoteGeneratorClient() {
   const [job, setJob] = useState('')
   const [mood, setMood] = useState('')
+  const [description, setDescription] = useState('')
   const [isPanelOpen, setIsPanelOpen] = useState(false)
   const [currentIcon, setCurrentIcon] = useState('')
   const [iconInfo, setIconInfo] = useState<IconInfo | null>(null)
   const [isIconInfoLoading, setIsIconInfoLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [quoteData, setQuoteData] = useState<QuoteData | null>(null)
-  const [description, setDescription] = useState('')
   const [generatedImage, setGeneratedImage] = useState<string | null>(null)
   const [isGeneratingImage, setIsGeneratingImage] = useState(false)
   const { address } = useAccount()
-
-  async function saveIconForUser(userAddress: Address, iconName: string) {
-    try {
-      const response = await fetch('/api/save-icon', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ address: userAddress, icon: iconName }),
-      })
-      if (response.ok) {
-        toast.success('Fashion icon saved to your profile!')
-      } else {
-        throw new Error('Failed to save fashion icon')
-      }
-    } catch (error) {
-      console.error('Error saving icon:', error)
-      toast.error('Failed to save fashion icon. Please try again.')
-    }
-  }
-
-  async function handleGenerateImage() {
-    if (!quoteData) return
-    const signatureElement = quoteData.signatureElement
-    setIsGeneratingImage(true)
-    try {
-      const response = await fetch('/api/generate-image', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ description, signatureElement }),
-      })
-      const data = await response.json() as { imageUrl: string }
-      setGeneratedImage(data.imageUrl)
-    } catch (error) {
-      console.error('Error generating image:', error)
-      setError('Failed to generate image. Please try again.')
-    } finally {
-      setIsGeneratingImage(false)
-    }
-  }
 
   const { append, isLoading } = useChat({
     api: '/api/chat',
@@ -85,7 +46,6 @@ export function FashionQuoteGeneratorClient() {
     onFinish: (message) => {
       try {
         const structuredQuoteData = JSON.parse(message.content) as QuoteData
-        console.log('structuredQuote', structuredQuoteData)
         setQuoteData(structuredQuoteData)
         if (address) {
           saveIconForUser(address, structuredQuoteData.icon)
@@ -122,11 +82,32 @@ export function FashionQuoteGeneratorClient() {
     },
   })
 
+  async function saveIconForUser(userAddress: Address, iconName: string) {
+    try {
+      const response = await fetch('/api/save-icon', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ address: userAddress, icon: iconName }),
+      })
+      if (response.ok) {
+        toast.success('Fashion icon saved to your profile!')
+      } else {
+        throw new Error('Failed to save fashion icon')
+      }
+    } catch (error) {
+      console.error('Error saving icon:', error)
+      toast.error('Failed to save fashion icon. Please try again.')
+    }
+  }
+
   const handleGenerateQuote = (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
     setQuoteData(null)
-    const prompt = `I'm a ${job} and I'm feeling ${mood}. Can you give me an inspirational fashion quote that's relevant to my situation?`
+    setGeneratedImage(null)
+    const prompt = `I'm a ${job} and I'm feeling ${mood}. I would describe myself as ${description}. Can you give me an inspirational fashion quote that's relevant to my situation?`
     append({ role: 'user', content: prompt })
   }
 
@@ -136,6 +117,68 @@ export function FashionQuoteGeneratorClient() {
     setIsIconInfoLoading(true)
     setIsPanelOpen(true)
     appendIconInfo({ role: 'user', content: iconName })
+  }
+
+  const handleGenerateImage = async () => {
+    if (!quoteData) return
+    setIsGeneratingImage(true)
+    try {
+      const response = await fetch('/api/generate-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ description, signatureElement: quoteData.signatureElement }),
+      })
+      const data = await response.json() as { imageUrl: string }
+      setGeneratedImage(data.imageUrl)
+    } catch (error) {
+      console.error('Error generating image:', error)
+      setError('Failed to generate image. Please try again.')
+    } finally {
+      setIsGeneratingImage(false)
+    }
+  }
+
+  const handleShare = () => {
+    if (quoteData && generatedImage) {
+      const shareText = `"${quoteData.quote}" - ${quoteData.icon}\nGenerated by Fashionista Quotes`
+      navigator.share({
+        title: 'My Fashion Quote',
+        text: shareText,
+        url: generatedImage
+      }).then(() => {
+        toast.success('Shared successfully!')
+      }).catch((error) => {
+        console.error('Error sharing:', error)
+        toast.error('Failed to share. Please try again.')
+      })
+    }
+  }
+
+  const handleDownload = async () => {
+    if (generatedImage) {
+      try {
+        const proxyUrl = `/api/proxy-download?url=${encodeURIComponent(generatedImage)}`
+        const response = await fetch(proxyUrl)
+
+        if (!response.ok) {
+          throw new Error('Failed to download image')
+        }
+
+        const blob = await response.blob()
+        const url = window.URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = 'fashion-quote-image.png'
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        window.URL.revokeObjectURL(url)
+        toast.success('Image downloaded successfully!')
+      } catch (error) {
+        console.error('Error downloading image:', error)
+        toast.error('Failed to download image. Please try again.')
+      }
+    }
   }
 
   return (
@@ -207,30 +250,66 @@ export function FashionQuoteGeneratorClient() {
                 {error}
               </div>
             )}
-            {quoteData && (
-              <div className="mt-6 p-4 bg-black/80 text-white rounded-lg">
-                <p className="text-lg font-semibold text-center italic">&ldquo;{quoteData.quote}&rdquo;</p>
-                <Button
-                  onClick={() => handleIconClick(quoteData.icon)}
-                  className="mt-2 text-xs text-center uppercase tracking-wider text-yellow-500 hover:text-yellow-400 transition-colors duration-300 w-full"
-                  variant="link"
+            <AnimatePresence>
+              {quoteData && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="mt-6 p-4 bg-black/80 text-white rounded-lg"
                 >
-                  - {quoteData.icon} (Click for more info)
-                </Button>
-                <Button
-                  onClick={handleGenerateImage}
-                  className="mt-4 w-full bg-yellow-500 hover:bg-yellow-600 text-black"
-                  disabled={isGeneratingImage}
+                  <p className="text-lg font-semibold text-center italic">&ldquo;{quoteData.quote}&rdquo;</p>
+                  <Button
+                    onClick={() => handleIconClick(quoteData.icon)}
+                    className="mt-2 text-xs text-center uppercase tracking-wider text-yellow-500 hover:text-yellow-400 transition-colors duration-300 w-full"
+                    variant="link"
+                  >
+                    - {quoteData.icon} (Click for more info)
+                  </Button>
+                  {!generatedImage && (
+                    <Button
+                      onClick={handleGenerateImage}
+                      className="mt-4 w-full bg-yellow-500 hover:bg-yellow-600 text-black transition-colors duration-300"
+                      disabled={isGeneratingImage}
+                    >
+                      {isGeneratingImage ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Generating Image...
+                        </>
+                      ) : (
+                        <>
+                          <ImageIcon className="mr-2 h-4 w-4" />
+                          Generate Fashion Image
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+            <AnimatePresence>
+              {generatedImage && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  className="mt-6"
                 >
-                  {isGeneratingImage ? 'AI gods are making image...' : 'Generate Fashion Image'}
-                </Button>
-              </div>
-            )}
-            {generatedImage && (
-              <div className="mt-6">
-                <img src={generatedImage} alt="Generated fashion image" className="w-full rounded-lg shadow-lg" />
-              </div>
-            )}
+                  <img src={generatedImage} alt="Generated fashion image" className="w-full rounded-lg shadow-lg" />
+                  <div className="mt-4 flex justify-center space-x-4">
+                    <Button onClick={handleShare} className="flex items-center">
+                      <Share2 className="mr-2 h-4 w-4" />
+                      Share
+                    </Button>
+                    <Button onClick={handleDownload} className="flex items-center">
+                      <Download className="mr-2 h-4 w-4" />
+                      Download
+                    </Button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </CardContent>
         </Card>
       </div>
