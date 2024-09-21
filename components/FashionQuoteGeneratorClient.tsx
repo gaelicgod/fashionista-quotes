@@ -102,6 +102,26 @@ export function FashionQuoteGeneratorClient() {
     }
   }
 
+  async function saveImageForUser(userAddress: Address, imageUrl: string) {
+    try {
+      const response = await fetch('/api/save-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ address: userAddress, imageUrl }),
+      })
+      if (response.ok) {
+        toast.success('Fashion image saved to your profile!')
+      } else {
+        throw new Error('Failed to save fashion image')
+      }
+    } catch (error) {
+      console.error('Error saving image:', error)
+      toast.error('Failed to save fashion image. Please try again.')
+    }
+  }
+
   const handleGenerateQuote = (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
@@ -120,7 +140,7 @@ export function FashionQuoteGeneratorClient() {
   }
 
   const handleGenerateImage = async () => {
-    if (!quoteData) return
+    if (!quoteData || !address) return
     setIsGeneratingImage(true)
     try {
       const response = await fetch('/api/generate-image', {
@@ -130,6 +150,9 @@ export function FashionQuoteGeneratorClient() {
       })
       const data = await response.json() as { imageUrl: string }
       setGeneratedImage(data.imageUrl)
+
+      // Save the image URL to Vercel KV
+      await saveImageForUser(address, data.imageUrl)
     } catch (error) {
       console.error('Error generating image:', error)
       setError('Failed to generate image. Please try again.')
@@ -266,7 +289,7 @@ export function FashionQuoteGeneratorClient() {
                   >
                     - {quoteData.icon} (Click for more info)
                   </Button>
-                  {!generatedImage && (
+                  {!generatedImage && address && (
                     <Button
                       onClick={handleGenerateImage}
                       className="mt-4 w-full bg-yellow-500 hover:bg-yellow-600 text-black transition-colors duration-300"
