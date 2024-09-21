@@ -3,6 +3,7 @@ import { Address } from 'viem'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Image from 'next/image'
+import { cache } from 'react'
 
 type UserData = {
   address: Address
@@ -10,7 +11,7 @@ type UserData = {
   imageUrl?: string
 }
 
-async function getUserData() {
+const getUserData = cache(async () => {
   const keys = await kv.keys('user:*:icon')
   const userData = await Promise.all(
     keys.map(async (key) => {
@@ -21,7 +22,7 @@ async function getUserData() {
     })
   )
   return userData
-}
+})
 
 export default async function IconsPage() {
   const userData = await getUserData()
@@ -73,3 +74,6 @@ export default async function IconsPage() {
     </div>
   )
 }
+
+
+export const revalidate = 300 // Revalidate every 5 minutes
