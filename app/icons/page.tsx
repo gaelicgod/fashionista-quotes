@@ -1,6 +1,6 @@
 import { kv } from '@vercel/kv'
 import { Address } from 'viem'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Image from 'next/image'
 
@@ -27,50 +27,43 @@ export default async function IconsPage() {
   const userData = await getUserData()
 
   return (
-    <div className="min-h-screen bg-[#0A1A2F] font-serif">
+    <div className="min-h-screen bg-[#0A1A2F] font-serif p-4">
       <div className="fixed inset-0 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-blue-700 to-blue-500 opacity-30"></div>
-        <div className="absolute inset-0 opacity-10 bg-[linear-gradient(45deg,#000000_25%,transparent_25%,transparent_75%,#000000_75%,#000000),linear-gradient(45deg,#000000_25%,transparent_25%,transparent_75%,#000000_75%,#000000)] bg-[length:60px_60px] bg-[position:0_0,30px_30px]"></div>
+        <div className="absolute inset-0 bg-[#0A1A2F] opacity-90"></div>
+        <div className="absolute inset-0 opacity-10 bg-[linear-gradient(45deg,#ffffff_25%,transparent_25%,transparent_75%,#ffffff_75%,#ffffff),linear-gradient(45deg,#ffffff_25%,transparent_25%,transparent_75%,#ffffff_75%,#ffffff)] bg-[length:60px_60px] bg-[position:0_0,30px_30px]"></div>
       </div>
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-        <Card className="w-full max-w-6xl bg-white/90 backdrop-blur-sm border-2 border-blue-300 shadow-2xl mb-8">
-          <CardHeader className="relative">
-            <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-1 text-xs font-bold uppercase tracking-wider">
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen">
+        <Card className="w-full max-w-4xl bg-white shadow-2xl overflow-hidden">
+          <CardHeader className="relative bg-white pb-8 pt-12">
+            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-4 py-1 text-xs font-bold uppercase tracking-wider rounded-b-md">
               Exclusive
             </div>
-            <CardTitle className="text-4xl font-bold text-center text-[#0A1A2F] uppercase tracking-widest mb-2">Fashionista Icons</CardTitle>
-            <CardDescription className="text-xl text-center text-[#0A1A2F] uppercase tracking-wide">Icon Gallery</CardDescription>
+            <CardTitle className="text-5xl font-bold text-center text-[#0A1A2F] uppercase tracking-widest mb-2">Fashionista Icons</CardTitle>
+            <div className="text-xl text-center text-[#0A1A2F] uppercase tracking-wide">Icon Gallery</div>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+          <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6 bg-gray-100">
             {userData.map(({ address, icon, imageUrl }: UserData) => (
-              <Card key={address} className="overflow-hidden bg-white shadow-lg hover:shadow-xl transition-all duration-300 border border-blue-200">
-                <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-400 py-2">
-                  <CardTitle className="text-sm font-mono text-white truncate">
-                    Wallet: {address}
-                  </CardTitle>
+              <Card key={address} className="overflow-hidden bg-white shadow-md hover:shadow-lg transition-shadow duration-300">
+                <CardHeader className="bg-blue-600 py-2 px-4">
+                  <p className="text-xs text-blue-200 mb-1">Wallet</p>
+                  <p className="text-sm font-mono text-white truncate">{address}</p>
                 </CardHeader>
-                <CardContent className="p-4 flex flex-col items-center space-y-4">
-                  {imageUrl ? (
-                    <div className="w-full h-48 relative">
+                <CardContent className="p-4">
+                  {imageUrl && (
+                    <div className="w-full h-48 relative mb-4">
                       <Image
                         src={imageUrl}
                         alt={`Generated image for ${icon}`}
                         layout="fill"
                         objectFit="cover"
-                        className="rounded-lg"
+                        className="rounded-md"
                       />
                     </div>
-                  ) : (
-                    <div className="w-full h-48 bg-gray-200 flex items-center justify-center rounded-lg">
-                      <p className="text-gray-500">No image generated</p>
-                    </div>
                   )}
-                  <div className="text-center">
-                    <p className="text-sm text-gray-600 mb-2">Fashion Icon:</p>
-                    <Badge variant="secondary" className="text-lg py-1 px-3 bg-gradient-to-r from-[#D4AF37] to-[#FFD700] text-[#0A1A2F] border-none">
-                      {icon}
-                    </Badge>
-                  </div>
+                  <p className="text-xs text-gray-500 mb-1 text-center">Fashion Icon</p>
+                  <Badge variant="secondary" className="text-lg py-1 px-3 bg-gradient-to-r from-[#D4AF37] to-[#FFD700] text-[#0A1A2F] border-none w-full text-center">
+                    {icon}
+                  </Badge>
                 </CardContent>
               </Card>
             ))}
