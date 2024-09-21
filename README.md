@@ -27,6 +27,11 @@ Fashionista Quotes is a Next.js application that generates inspirational fashion
    ```
    OPENAI_API_KEY=your_openai_api_key_here
    NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=your_wallet_connect_project_id_here
+   NEXT_PUBLIC_ALCHEMY_ID=your_alchemy_id_here
+   KV_URL=your_kv_url_here
+   KV_REST_API_URL=your_kv_rest_api_url_here
+   KV_REST_API_TOKEN=your_kv_rest_api_token_here
+   KV_REST_API_READ_ONLY_TOKEN=your_kv_rest_api_read_only_token_here
    ```
 4. Run the development server:
    ```bash
