@@ -20,7 +20,7 @@ Fashionista Quotes is a Next.js application that generates inspirational fashion
 1. Clone the repository
 2. Install dependencies:
    ```bash
-   npm install
+   pnpm install
    ```
 3. Set up your environment variables:
    Create a `.env.local` file in the root directory and add the following:
@@ -30,7 +30,7 @@ Fashionista Quotes is a Next.js application that generates inspirational fashion
    ```
 4. Run the development server:
    ```bash
-   npm run dev
+   pnpm dev
    ```
 5. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
@@ -46,6 +46,7 @@ Fashionista Quotes is a Next.js application that generates inspirational fashion
 - `app/api/generate-image/route.ts`: Generates fashion images using DALL-E 3
 - `app/api/save-icon/route.ts`: Saves user's fashion icon to Vercel KV
 - `app/api/save-image/route.ts`: Saves user's generated image URL to Vercel KV
+- `app/api/proxy-download/route.ts`: Proxies image downloads
 
 ## Key Components
 
@@ -69,7 +70,15 @@ To learn more about the technologies used in this project, check out the followi
 - [RainbowKit](https://www.rainbowkit.com/docs/introduction)
 - [wagmi](https://wagmi.sh/)
 - [Vercel KV](https://vercel.com/docs/storage/vercel-kv)
+- [pnpm](https://pnpm.io/motivation)
 
 ## Deployment
 
 This project is designed to be deployed on Vercel. Make sure to set up the necessary environment variables in your Vercel project settings.
+
+## Scripts
+
+- `pnpm dev`: Runs the development server
+- `pnpm build`: Builds the application for production
+- `pnpm start`: Starts the production server
+- `pnpm lint`: Runs the linter
