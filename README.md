@@ -1,16 +1,19 @@
 # Fashionista Quotes
 
-Fashionista Quotes is a Next.js application that provides inspirational quotes from famous fashion icons based on the user's job and mood.
+Fashionista Quotes is a Next.js application that generates inspirational fashion quotes and images based on the user's job, mood, and self-description.
 
 ## Features
 
 - Dynamic quote generation using OpenAI's GPT-4 model
+- Image generation using DALL-E 3
 - Web3 integration with RainbowKit for wallet connection
 - Responsive design with Tailwind CSS
-- Sleek UI with custom animations
+- Sleek UI with custom animations using Framer Motion
 - Server-side rendering with client-side interactivity
 - Loading skeleton for improved user experience
 - Fashion icon information panel
+- Image sharing and downloading capabilities
+- User profile storage using Vercel KV
 
 ## Getting Started
 
@@ -20,10 +23,9 @@ Fashionista Quotes is a Next.js application that provides inspirational quotes f
    npm install
    ```
 3. Set up your environment variables:
-   Create a `.env.local` file in the root directory and add your OpenAI API key:
+   Create a `.env.local` file in the root directory and add the following:
    ```
-   OPENAI_API_KEY=your_api_key_here
-   NEXT_PUBLIC_ALCHEMY_ID=your_alchemy_id_here
+   OPENAI_API_KEY=your_openai_api_key_here
    NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=your_wallet_connect_project_id_here
    ```
 4. Run the development server:
@@ -34,27 +36,27 @@ Fashionista Quotes is a Next.js application that provides inspirational quotes f
 
 ## Project Structure
 
-- `app/`: Contains the main application code
+- `app/`: Contains the main application code and API routes
 - `components/`: Reusable React components
-- `lib/`: Utility functions and helpers
 - `public/`: Static assets
 
-## API
+## API Routes
 
-The project uses an Edge API route for generating fashion quotes. You can find the implementation here:
+- `app/api/chat/route.ts`: Generates fashion quotes
+- `app/api/generate-image/route.ts`: Generates fashion images using DALL-E 3
+- `app/api/save-icon/route.ts`: Saves user's fashion icon to Vercel KV
+- `app/api/save-image/route.ts`: Saves user's generated image URL to Vercel KV
 
-`app/api/chat/route.ts`
+## Key Components
 
+- `FashionQuoteGeneratorClient`: The main component for generating quotes and images
+- `FashionIconPanel`: A sliding panel displaying information about fashion icons
+- `FashionQuoteSkeleton`: A loading skeleton for improved user experience
+- `IconsPage`: Displays a gallery of user-generated fashion icons and images
 
 ## Styling
 
 This project uses Tailwind CSS for styling. The main configuration can be found in `tailwind.config.js`. Custom UI components are located in the `components/ui/` directory.
-
-## Key Components
-
-- `FashionQuoteGeneratorClient`: The main component for generating quotes
-- `FashionIconPanel`: A sliding panel displaying information about fashion icons
-- `FashionQuoteSkeleton`: A loading skeleton for improved user experience
 
 ## Learn More
 
@@ -66,9 +68,8 @@ To learn more about the technologies used in this project, check out the followi
 - [Framer Motion](https://www.framer.com/motion/)
 - [RainbowKit](https://www.rainbowkit.com/docs/introduction)
 - [wagmi](https://wagmi.sh/)
+- [Vercel KV](https://vercel.com/docs/storage/vercel-kv)
 
 ## Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is designed to be deployed on Vercel. Make sure to set up the necessary environment variables in your Vercel project settings.
