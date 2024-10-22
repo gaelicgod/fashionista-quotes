@@ -53,7 +53,7 @@
     "postcss": "^8",
     "shadcn-ui": "^0.2.3",
     "tailwindcss": "^3.4.1",
-    "turbo": "^2.1.2",
+    "turbo": "^2.2.3",
     "typescript": "^5",
     "vitest": "^2.1.1"
   },
